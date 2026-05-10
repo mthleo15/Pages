@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Progression</title>
+<style>
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+
+    background: radial-gradient(circle at top, #1e1e2f, #0b0b12);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Bloc invisible qui regroupe tout */
+.ui-center {
+    text-align: center;
+    transform: translateY(-80px);
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+#percent {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* Barre */
+.progress-bar {
+    width: 80vw;
+    max-width: 1000px;
+    margin: auto;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    height: 22px;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00ffa2, #00c3ff);
+    box-shadow: 0 0 10px #00c3ff;
+    transition: width 0.1s linear;
+}
+
+/* Inputs */
+.time-inputs {
+    margin-bottom: 15px;
+}
+
+input[type="number"] {
+    width: 90px;
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
+    text-align: center;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.4);
+    color: white;
+    outline: none;
+    transition: 0.2s;
+}
+
+input[type="number"]:focus {
+    border-color: #00c3ff;
+    box-shadow: 0 0 8px #00c3ff;
+}
+
+/* Bouton */
+button {
+    margin-top: 10px;
+    padding: 12px 35px;
+    font-size: 18px;
+    border-radius: 30px;
+    border: none;
+    background: linear-gradient(135deg, #00ffa2, #00c3ff);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 0 15px rgba(0,195,255,0.4);
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(0,195,255,0.8);
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.controls button {
+    padding: 10px 22px;
+    font-size: 16px;
+    border-radius: 25px;
+    border: none;
+    background: linear-gradient(135deg, #00ffa2, #00c3ff);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.controls button:hover {
+    transform: scale(1.05);
+}
+
+.controls button:active {
+    transform: scale(0.95);
+}
+
+/* Bouton Thème en haut à droite */
+.theme-container {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    text-align: right;
+    z-index: 1000;
+}
+
+#themeBtn {
+    padding: 8px 18px;
+    font-size: 16px;
+    border-radius: 25px;
+    border: none;
+    background: linear-gradient(135deg, #00ffa2, #00c3ff);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#themeBtn:hover {
+    transform: scale(1.05);
+}
+
+/* Menu déroulant */
+.theme-menu {
+    display: none;
+    margin-top: 8px;
+    background: rgba(0,0,0,0.5);
+    padding: 8px 10px;
+    border-radius: 12px;
+}
+
+.theme-menu select {
+    padding: 6px 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(0,0,0,0.4);
+    color: white;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="theme-container">
+    <button id="themeBtn" onclick="toggleThemeMenu()">🎨 Thème</button>
+    <div id="themeMenu" class="theme-menu">
+        <label>Choisir le thème :</label><br>
+        <select id="themeSelect" onchange="changeTheme()">
+            <option value="greenBlue">Vert → Bleu</option>
+            <option value="redOrange">Rouge → Orange</option>
+            <option value="orangeYellow">Orange → Jaune</option>
+            <option value="yellowGreen">Jaune → Vert</option>
+            <option value="purplePink">Violet → Rose</option>
+            <option value="bluePurple">Bleu → Violet</option>
+            <option value="cyanBlue">Cyan → Bleu</option>
+            <option value="pinkRed">Rose → Rouge</option>
+            <option value="limeGreen">Lime → Vert</option>
+            <option value="goldOrange">Or → Orange</option>
+        </select>
+    </div>
+</div>
+
+
+
+<div class="ui-center">
+    <h2>⏱ Progression</h2>
+
+    <div class="time-inputs">
+        <input type="number" id="hours" min="0" value="0"> h
+        <input type="number" id="minutes" min="0" max="59" value="0"> min
+        <input type="number" id="seconds" min="0" max="59" value="10"> s
+    </div>
+
+    <div class="controls">
+        <button id="startBtn" onclick="startProgress()">▶ Start</button>
+        <button id="pauseBtn" onclick="pauseProgress()">⏸ Pause</button>
+        <button id="resumeBtn" onclick="resumeProgress()">▶ Resume</button>
+        <button id="resetBtn" onclick="resetProgress()">⏹ Reset</button>
+    </div>
+
+
+
+    <div id="percent">0%</div>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+</div>
+
+<script>
+    let interval;
+    let startTime;
+    let totalTime;
+    let elapsedPaused = 0;
+    let isPaused = false;
+
+    const startBtn = document.getElementById("startBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const resumeBtn = document.getElementById("resumeBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function getTotalSeconds() {
+        const h = parseFloat(hours.value) || 0;
+        const m = parseFloat(minutes.value) || 0;
+        const s = parseFloat(seconds.value) || 0;
+        return h * 3600 + m * 60 + s;
+    }
+
+    function updateButtons() {
+        const percent = parseFloat(document.getElementById("percent").textContent) || 0;
+
+        startBtn.style.display = (percent === 0) ? "inline-block" : "none";
+        pauseBtn.style.display = (!isPaused && percent > 0 && percent < 100) ? "inline-block" : "none";
+        resumeBtn.style.display = (isPaused && percent > 0 && percent < 100) ? "inline-block" : "none";
+        resetBtn.style.display = "inline-block"; // toujours visible
+    }
+
+    function startProgress() {
+        clearInterval(interval);
+        elapsedPaused = 0;
+        isPaused = false;
+
+        const totalSeconds = getTotalSeconds();
+        if (totalSeconds <= 0) return;
+
+        totalTime = totalSeconds * 1000;
+        startTime = Date.now();
+
+        runTimer();
+        updateButtons();
+    }
+
+    function runTimer() {
+        const progressBar = document.getElementById("progress");
+        const percentText = document.getElementById("percent");
+
+        interval = setInterval(() => {
+            if (isPaused) return;
+
+            const elapsed = Date.now() - startTime + elapsedPaused;
+            let percent = (elapsed / totalTime) * 100;
+
+            if (percent >= 100) {
+                percent = 100;
+                clearInterval(interval);
+            }
+
+            progressBar.style.width = percent + "%";
+            percentText.textContent = percent.toFixed(2) + "%";
+
+            updateButtons();
+        }, 50);
+    }
+
+    function pauseProgress() {
+        if (isPaused) return;
+        isPaused = true;
+        elapsedPaused += Date.now() - startTime;
+        updateButtons();
+    }
+
+    function resumeProgress() {
+        if (!isPaused) return;
+        isPaused = false;
+        startTime = Date.now();
+        updateButtons();
+    }
+
+    function resetProgress() {
+        clearInterval(interval);
+        isPaused = false;
+        elapsedPaused = 0;
+
+        document.getElementById("progress").style.width = "0%";
+        document.getElementById("percent").textContent = "0%";
+
+        updateButtons();
+    }
+
+    // initialisation au chargement
+    updateButtons();
+
+    // Gestion menu thème
+    function toggleThemeMenu() {
+        const menu = document.getElementById("themeMenu");
+        menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    }
+
+    // Dégradés disponibles
+    const themes = {
+        greenBlue: "linear-gradient(90deg, #00ff99, #00c3ff)",
+        redOrange: "linear-gradient(90deg, #ff3b3b, #ff9900)",
+        orangeYellow: "linear-gradient(90deg, #ff7f00, #ffea00)",
+        yellowGreen: "linear-gradient(90deg, #ffee00, #00ff99)",
+        purplePink: "linear-gradient(90deg, #9b00ff, #ff66cc)",
+        bluePurple: "linear-gradient(90deg, #0044ff, #9900ff)",
+        cyanBlue: "linear-gradient(90deg, #00ffff, #0044ff)",
+        pinkRed: "linear-gradient(90deg, #ff66cc, #ff0033)",
+        limeGreen: "linear-gradient(90deg, #ccff00, #00ff33)",
+        goldOrange: "linear-gradient(90deg, #ffd700, #ff7f00)"
+    };
+
+    function changeTheme() {
+        const select = document.getElementById("themeSelect");
+        const theme = select.value;
+        const gradient = themes[theme];
+
+        // Barre de progression
+        document.getElementById("progress").style.background = gradient;
+
+        // Boutons (Start, Pause, Resume, Reset, Thème)
+        const buttons = document.querySelectorAll(".controls button, #themeBtn");
+        buttons.forEach(btn => {
+            btn.style.background = gradient;
+        });
+    }
+</script>
+</body>
+</html>

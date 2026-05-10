@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculateur de temps</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #1e1e2f, #0b0b12);
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        padding: 2rem;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 2.5rem 3rem;
+        text-align: center;
+        width: 100%;
+        max-width: 480px;
+    }
+
+    h2 {
+        font-size: 22px;
+        font-weight: 500;
+        margin-bottom: 0.3rem;
+        color: #fff;
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.45);
+        margin-bottom: 2rem;
+    }
+
+    .now-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 1.5rem;
+    }
+
+    .now-value {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 13px;
+    }
+
+    .input-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 1.5rem;
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        padding: 0.75rem 1.25rem;
+        transition: border-color 0.2s;
+    }
+
+    .input-row:focus-within {
+        border-color: #00c3ff;
+        box-shadow: 0 0 8px rgba(0, 195, 255, 0.3);
+    }
+
+    .input-row i {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.4);
+        flex-shrink: 0;
+    }
+
+    .input-row input {
+        background: none;
+        border: none;
+        outline: none;
+        font-size: 17px;
+        color: white;
+        width: 100%;
+    }
+
+    .input-row input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .input-row input::-webkit-inner-spin-button,
+    .input-row input::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 13px;
+        font-size: 17px;
+        font-weight: bold;
+        border: none;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #00ffa2, #00c3ff);
+        color: black;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 0 15px rgba(0, 195, 255, 0.4);
+    }
+
+    .btn:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 25px rgba(0, 195, 255, 0.8);
+    }
+
+    .btn:active {
+        transform: scale(0.97);
+    }
+
+    .separator {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.08);
+        margin: 1.75rem 0;
+    }
+
+    .result {
+        display: none;
+    }
+
+    .result-label {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.45);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.5rem;
+    }
+
+    .result-time {
+        font-size: 48px;
+        font-weight: bold;
+        background: linear-gradient(90deg, #00ffa2, #00c3ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.4rem;
+    }
+
+    .result-date {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.75);
+        margin-bottom: 0.3rem;
+    }
+
+    .result-detail {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Erreur input */
+    .input-row.error {
+        border-color: #ff6b6b;
+        box-shadow: 0 0 8px rgba(255, 107, 107, 0.4);
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>⏱ Calculateur de temps</h2>
+    <p class="subtitle">Ajoutez un délai à l'heure actuelle</p>
+
+    <div class="now-row">
+        <span>Maintenant</span>
+        <span class="now-value" id="nowDisplay">—</span>
+    </div>
+
+    <div class="input-row" id="inputRow">
+        <i class="ti ti-clock-plus" aria-hidden="true"></i>
+        <input
+            type="number"
+            id="minutesInput"
+            min="0"
+            placeholder="Nombre de minutes à ajouter"
+        />
+    </div>
+
+    <button class="btn" onclick="calculate()">Calculer</button>
+
+    <div class="result" id="result">
+        <div class="separator"></div>
+        <div class="result-label">Date et heure calculée</div>
+        <div class="result-time" id="resultTime">—</div>
+        <div class="result-date" id="resultDate">—</div>
+        <div class="result-detail" id="resultDetail">—</div>
+    </div>
+</div>
+
+<script>
+    function pad(n) {
+        return String(n).padStart(2, '0');
+    }
+
+    function formatFull(d) {
+        const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+        const months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+                        'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+        return days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+    }
+
+    function formatTime(d) {
+        return pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+    }
+
+    function updateNow() {
+        const now = new Date();
+        document.getElementById('nowDisplay').textContent =
+            formatFull(now) + ' — ' + formatTime(now);
+    }
+
+    updateNow();
+    setInterval(updateNow, 1000);
+
+    function calculate() {
+        const inputRow = document.getElementById('inputRow');
+        const val = parseFloat(document.getElementById('minutesInput').value);
+
+        if (isNaN(val) || val < 0) {
+            inputRow.classList.add('error');
+            setTimeout(() => inputRow.classList.remove('error'), 800);
+            return;
+        }
+
+        inputRow.classList.remove('error');
+
+        const now = new Date();
+        const target = new Date(now.getTime() + val * 60000);
+
+        const h = Math.floor(val / 60);
+        const m = Math.round(val % 60);
+        let durTxt = '';
+        if (h > 0) durTxt += h + 'h ';
+        if (m > 0 || h === 0) durTxt += m + ' min';
+
+        document.getElementById('resultTime').textContent = formatTime(target);
+        document.getElementById('resultDate').textContent = formatFull(target);
+        document.getElementById('resultDetail').textContent = 'Dans ' + durTxt.trim() + ' à partir de maintenant';
+
+        document.getElementById('result').style.display = 'block';
+    }
+
+    document.getElementById('minutesInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') calculate();
+    });
+</script>
+
+</body>
+</html>
