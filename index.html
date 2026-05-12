@@ -5,11 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Accueil</title>
 <style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
         font-family: "Segoe UI", Arial, sans-serif;
@@ -39,24 +35,24 @@
 
     .header p {
         font-size: 15px;
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(255,255,255,0.4);
     }
 
     .cards {
         display: flex;
-        gap: 24px;
+        gap: 20px;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
     }
 
     .card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
         border-radius: 20px;
-        padding: 2rem 2.5rem;
+        padding: 2rem 2rem;
         text-align: center;
-        width: 220px;
+        width: 200px;
         text-decoration: none;
         color: white;
         transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -65,56 +61,54 @@
 
     .card:hover {
         transform: translateY(-6px);
-        border-color: rgba(0, 195, 255, 0.5);
-        box-shadow: 0 0 30px rgba(0, 195, 255, 0.2);
+        border-color: rgba(0,195,255,0.5);
+        box-shadow: 0 0 30px rgba(0,195,255,0.2);
     }
 
-    .card:active {
-        transform: translateY(-2px);
-    }
+    .card:active { transform: translateY(-2px); }
 
     .card-icon {
-        font-size: 42px;
+        font-size: 40px;
         margin-bottom: 1.2rem;
     }
 
     .card-title {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 500;
         margin-bottom: 0.5rem;
     }
 
     .card-desc {
         font-size: 13px;
-        color: rgba(255, 255, 255, 0.4);
+        color: rgba(255,255,255,0.4);
         line-height: 1.5;
     }
 
     .card-btn {
         display: inline-block;
         margin-top: 1.5rem;
-        padding: 9px 24px;
+        padding: 9px 22px;
         font-size: 14px;
         font-weight: bold;
         border-radius: 30px;
         background: linear-gradient(135deg, #00ffa2, #00c3ff);
         color: black;
         transition: transform 0.2s, box-shadow 0.2s;
-        box-shadow: 0 0 12px rgba(0, 195, 255, 0.3);
+        box-shadow: 0 0 12px rgba(0,195,255,0.3);
     }
 
     .card:hover .card-btn {
         transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(0, 195, 255, 0.6);
+        box-shadow: 0 0 20px rgba(0,195,255,0.6);
     }
 
     .separator {
         width: 1px;
         height: 180px;
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(255,255,255,0.08);
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 700px) {
         .separator { display: none; }
         .cards { flex-direction: column; align-items: center; }
     }
@@ -123,7 +117,8 @@
 <body>
 
 <div class="header">
-    <h1>🛠 Pages outils</h1>
+    <h1>🛠 Mes outils</h1>
+    <p>Choisissez un outil pour commencer</p>
 </div>
 
 <div class="cards">
@@ -141,6 +136,15 @@
         <div class="card-icon">🕐</div>
         <div class="card-title">Calculateur</div>
         <div class="card-desc">Ajoutez un nombre de minutes à l'heure actuelle et obtenez la date exacte.</div>
+        <div class="card-btn">Ouvrir →</div>
+    </a>
+
+    <div class="separator"></div>
+
+    <a class="card" href="classement.html">
+        <div class="card-icon">🏆</div>
+        <div class="card-title">Classement</div>
+        <div class="card-desc">Comparez vos items deux à deux et obtenez un classement par points.</div>
         <div class="card-btn">Ouvrir →</div>
     </a>
 

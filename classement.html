@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classement</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #1e1e2f, #0b0b12);
+        background-attachment: fixed;
+        background-size: cover;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    /* Bouton retour */
+    .back-btn {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        padding: 8px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 25px;
+        border: none;
+        background: linear-gradient(135deg, #00ffa2, #00c3ff);
+        color: black;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 0 12px rgba(0,195,255,0.3);
+        z-index: 1000;
+    }
+    .back-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,195,255,0.7); }
+
+    /* Card générique */
+    .card {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 2.5rem 3rem;
+        width: 100%;
+        max-width: 560px;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: rgba(255,255,255,0.4);
+        margin-bottom: 1.8rem;
+    }
+
+    /* Textarea */
+    textarea {
+        width: 100%;
+        min-height: 160px;
+        background: rgba(0,0,0,0.35);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 14px;
+        color: white;
+        font-size: 15px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        padding: 1rem 1.2rem;
+        outline: none;
+        resize: vertical;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        line-height: 1.7;
+    }
+    textarea:focus {
+        border-color: #00c3ff;
+        box-shadow: 0 0 8px rgba(0,195,255,0.3);
+    }
+    textarea::placeholder { color: rgba(255,255,255,0.25); }
+
+    /* Bouton principal */
+    .btn {
+        margin-top: 1.4rem;
+        padding: 13px 40px;
+        font-size: 17px;
+        font-weight: bold;
+        border-radius: 30px;
+        border: none;
+        background: linear-gradient(135deg, #00ffa2, #00c3ff);
+        color: black;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 0 15px rgba(0,195,255,0.4);
+    }
+    .btn:hover { transform: scale(1.04); box-shadow: 0 0 25px rgba(0,195,255,0.7); }
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+    /* ---- ÉCRAN COMPARAISON ---- */
+    .vs-screen { display: none; }
+
+    .progress-info {
+        font-size: 13px;
+        color: rgba(255,255,255,0.4);
+        margin-bottom: 1rem;
+    }
+
+    .progress-bar-wrap {
+        width: 100%;
+        background: rgba(255,255,255,0.08);
+        border-radius: 20px;
+        height: 6px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00ffa2, #00c3ff);
+        border-radius: 20px;
+        transition: width 0.4s ease;
+        box-shadow: 0 0 8px #00c3ff;
+    }
+
+    .vs-label {
+        font-size: 13px;
+        color: rgba(255,255,255,0.35);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 1.5rem;
+    }
+
+    .vs-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .vs-btn {
+        flex: 1;
+        min-width: 140px;
+        max-width: 220px;
+        padding: 1.1rem 1rem;
+        font-size: 17px;
+        font-weight: 500;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.06);
+        color: white;
+        cursor: pointer;
+        transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+        word-break: break-word;
+    }
+    .vs-btn:hover {
+        background: rgba(0,195,255,0.12);
+        border-color: rgba(0,195,255,0.5);
+        transform: translateY(-3px);
+        box-shadow: 0 0 20px rgba(0,195,255,0.25);
+    }
+    .vs-btn:active { transform: translateY(0); }
+
+    .vs-separator {
+        display: flex;
+        align-items: center;
+        color: rgba(255,255,255,0.25);
+        font-size: 15px;
+        font-weight: bold;
+        flex-shrink: 0;
+        align-self: center;
+    }
+
+    /* ---- ÉCRAN RÉSULTAT ---- */
+    .result-screen { display: none; }
+
+    .podium {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 12px;
+        margin-bottom: 2rem;
+        min-height: 130px;
+    }
+
+    .podium-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .podium-name {
+        font-size: 14px;
+        color: rgba(255,255,255,0.85);
+        max-width: 90px;
+        word-break: break-word;
+        text-align: center;
+        line-height: 1.3;
+    }
+
+    .podium-block {
+        width: 80px;
+        border-radius: 10px 10px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: black;
+    }
+
+    .podium-1 .podium-block { height: 110px; background: linear-gradient(180deg, #ffd700, #ffaa00); box-shadow: 0 0 20px rgba(255,200,0,0.5); }
+    .podium-2 .podium-block { height: 80px;  background: linear-gradient(180deg, #c0c0c0, #888); box-shadow: 0 0 12px rgba(200,200,200,0.3); }
+    .podium-3 .podium-block { height: 58px;  background: linear-gradient(180deg, #cd7f32, #a0522d); box-shadow: 0 0 12px rgba(180,100,0,0.3); }
+
+    .ranking-list {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 1.8rem;
+    }
+
+    .ranking-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 0.75rem 1.1rem;
+        transition: border-color 0.2s;
+    }
+    .ranking-row:hover { border-color: rgba(0,195,255,0.3); }
+
+    .rank-num {
+        font-size: 15px;
+        font-weight: bold;
+        color: rgba(255,255,255,0.35);
+        width: 24px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    .rank-name {
+        flex: 1;
+        font-size: 16px;
+        text-align: left;
+    }
+    .rank-score {
+        font-size: 13px;
+        color: rgba(255,255,255,0.4);
+        flex-shrink: 0;
+    }
+    .rank-bar-wrap {
+        width: 80px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 10px;
+        height: 6px;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    .rank-bar {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #00ffa2, #00c3ff);
+    }
+
+    /* Médailles top 3 */
+    .medal { margin-right: 2px; }
+
+    .btn-outline {
+        margin-top: 0.5rem;
+        padding: 11px 30px;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 30px;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: transparent;
+        color: white;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-outline:hover {
+        border-color: rgba(0,195,255,0.5);
+        background: rgba(0,195,255,0.08);
+    }
+
+    .error-msg {
+        color: #ff6b6b;
+        font-size: 13px;
+        margin-top: 0.6rem;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<a class="back-btn" href="index.html">← Retour</a>
+
+<!-- ÉCRAN 1 : SAISIE -->
+<div class="card" id="screen-input">
+    <h2>🏆 Classement</h2>
+    <p class="subtitle">Entrez vos items (un par ligne), puis comparez-les.</p>
+    <textarea id="itemsInput" placeholder="Pizza&#10;Burger&#10;Tacos&#10;Kebab&#10;Sushi"></textarea>
+    <p class="error-msg" id="errorMsg">⚠ Entrez au moins 2 items.</p>
+    <button class="btn" onclick="startComparison()">Commencer →</button>
+</div>
+
+<!-- ÉCRAN 2 : COMPARAISON -->
+<div class="card vs-screen" id="screen-vs">
+    <h2>⚖ Lequel préférez-vous ?</h2>
+    <p class="subtitle vs-label" id="vsLabel">Question 1 / 10</p>
+
+    <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="vsProgress" style="width:0%"></div>
+    </div>
+
+    <p class="vs-label">Choisissez votre préféré</p>
+
+    <div class="vs-buttons">
+        <button class="vs-btn" id="btnA" onclick="choose(0)">—</button>
+        <div class="vs-separator">VS</div>
+        <button class="vs-btn" id="btnB" onclick="choose(1)">—</button>
+    </div>
+</div>
+
+<!-- ÉCRAN 3 : RÉSULTATS -->
+<div class="card result-screen" id="screen-result">
+    <h2>🏆 Résultats</h2>
+    <p class="subtitle">Voici votre classement final</p>
+
+    <div class="podium" id="podium"></div>
+    <div class="ranking-list" id="rankingList"></div>
+
+    <button class="btn" onclick="restart()">🔄 Recommencer</button>
+</div>
+
+<script>
+    let items = [];
+    let scores = [];
+    let pairs = [];
+    let currentPair = 0;
+
+    function startComparison() {
+        const raw = document.getElementById("itemsInput").value;
+        items = raw.split("\n").map(s => s.trim()).filter(s => s.length > 0);
+
+        const errorMsg = document.getElementById("errorMsg");
+        if (items.length < 2) {
+            errorMsg.style.display = "block";
+            return;
+        }
+        errorMsg.style.display = "none";
+
+        // Initialiser scores
+        scores = new Array(items.length).fill(0);
+
+        // Générer toutes les paires
+        pairs = [];
+        for (let i = 0; i < items.length; i++) {
+            for (let j = i + 1; j < items.length; j++) {
+                pairs.push([i, j]);
+            }
+        }
+
+        // Mélanger les paires pour plus de naturel
+        pairs = pairs.sort(() => Math.random() - 0.5);
+
+        currentPair = 0;
+
+        document.getElementById("screen-input").style.display = "none";
+        document.getElementById("screen-vs").style.display = "block";
+
+        showPair();
+    }
+
+    function showPair() {
+        const total = pairs.length;
+        const [a, b] = pairs[currentPair];
+
+        document.getElementById("vsLabel").textContent =
+            "Question " + (currentPair + 1) + " / " + total;
+        document.getElementById("vsProgress").style.width =
+            ((currentPair / total) * 100) + "%";
+
+        document.getElementById("btnA").textContent = items[a];
+        document.getElementById("btnB").textContent = items[b];
+    }
+
+    function choose(side) {
+        const [a, b] = pairs[currentPair];
+        const winner = side === 0 ? a : b;
+        scores[winner] += 1;
+
+        currentPair++;
+
+        if (currentPair >= pairs.length) {
+            showResults();
+        } else {
+            showPair();
+        }
+    }
+
+    function showResults() {
+        // Barre de progression à 100%
+        document.getElementById("vsProgress").style.width = "100%";
+
+        // Trier par score décroissant
+        const ranked = items.map((name, i) => ({ name, score: scores[i] }))
+            .sort((a, b) => b.score - a.score);
+
+        const maxScore = ranked[0].score || 1;
+
+        // Podium (top 3)
+        const podiumEl = document.getElementById("podium");
+        podiumEl.innerHTML = "";
+
+        const medals = ["🥇", "🥈", "🥉"];
+        const podiumOrder = ranked.length >= 3
+            ? [ranked[1], ranked[0], ranked[2]]  // 2e, 1er, 3e pour l'effet podium
+            : ranked.slice(0, ranked.length);
+
+        if (ranked.length >= 3) {
+            // Afficher dans l'ordre podium visuel : 2e à gauche, 1er au centre, 3e à droite
+            const podiumPositions = [
+                { item: ranked[1], cls: "podium-2", emoji: "🥈" },
+                { item: ranked[0], cls: "podium-1", emoji: "🥇" },
+                { item: ranked[2], cls: "podium-3", emoji: "🥉" },
+            ];
+            podiumPositions.forEach(({ item, cls, emoji }) => {
+                const div = document.createElement("div");
+                div.className = "podium-item " + cls;
+                div.innerHTML = `
+                    <div class="podium-name">${escapeHtml(item.name)}</div>
+                    <div class="podium-block">${emoji}</div>
+                `;
+                podiumEl.appendChild(div);
+            });
+        } else {
+            // Moins de 3 items, affichage simplifié
+            ranked.forEach((item, i) => {
+                const div = document.createElement("div");
+                div.className = "podium-item podium-" + (i + 1);
+                div.innerHTML = `
+                    <div class="podium-name">${escapeHtml(item.name)}</div>
+                    <div class="podium-block">${medals[i] || ""}</div>
+                `;
+                podiumEl.appendChild(div);
+            });
+        }
+
+        // Liste complète
+        const listEl = document.getElementById("rankingList");
+        listEl.innerHTML = "";
+
+        ranked.forEach((item, i) => {
+            const pct = Math.round((item.score / maxScore) * 100);
+            const medal = i < 3 ? `<span class="medal">${medals[i]}</span>` : "";
+            const row = document.createElement("div");
+            row.className = "ranking-row";
+            row.innerHTML = `
+                <div class="rank-num">${i + 1}</div>
+                <div class="rank-name">${medal}${escapeHtml(item.name)}</div>
+                <div class="rank-bar-wrap">
+                    <div class="rank-bar" style="width:${pct}%"></div>
+                </div>
+                <div class="rank-score">${item.score} pt${item.score > 1 ? "s" : ""}</div>
+            `;
+            listEl.appendChild(row);
+        });
+
+        document.getElementById("screen-vs").style.display = "none";
+        document.getElementById("screen-result").style.display = "block";
+    }
+
+    function restart() {
+        document.getElementById("screen-result").style.display = "none";
+        document.getElementById("screen-input").style.display = "block";
+        document.getElementById("itemsInput").value = "";
+        items = [];
+        scores = [];
+        pairs = [];
+        currentPair = 0;
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+</script>
+</body>
+</html>
