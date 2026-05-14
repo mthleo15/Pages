@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Objectif minutes</title>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #1e1e2f, #0b0b12);
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        padding: 2rem;
+    }
+
+    .back-btn {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        padding: 8px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 25px;
+        border: none;
+        background: linear-gradient(135deg, #00ffa2, #00c3ff);
+        color: black;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 0 12px rgba(0,195,255,0.3);
+        z-index: 1000;
+    }
+    .back-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,195,255,0.7); }
+
+    .card {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 2.5rem 3rem;
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 0.4rem;
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: rgba(255,255,255,0.4);
+        margin-bottom: 2rem;
+    }
+
+    .field {
+        margin-bottom: 1.1rem;
+        text-align: left;
+    }
+
+    .field label {
+        display: block;
+        font-size: 13px;
+        color: rgba(255,255,255,0.45);
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 0.5rem;
+    }
+
+    .input-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0,0,0,0.35);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 14px;
+        padding: 0.75rem 1.2rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-row:focus-within {
+        border-color: #00c3ff;
+        box-shadow: 0 0 8px rgba(0,195,255,0.3);
+    }
+    .input-row input[type="number"] {
+        background: none;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        color: white;
+        width: 100%;
+    }
+    .input-row input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .input-row input[type="number"]::placeholder { color: rgba(255,255,255,0.25); }
+    .input-row .unit {
+        font-size: 14px;
+        color: rgba(255,255,255,0.35);
+        flex-shrink: 0;
+    }
+
+    .field input[type="date"] {
+        width: 100%;
+        padding: 0.75rem 1.2rem;
+        background: rgba(0,0,0,0.35);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 14px;
+        color: white;
+        font-size: 16px;
+        font-family: "Segoe UI", Arial, sans-serif;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        color-scheme: dark;
+    }
+    .field input[type="date"]:focus {
+        border-color: #00c3ff;
+        box-shadow: 0 0 8px rgba(0,195,255,0.3);
+    }
+
+    .divider {
+        height: 1px;
+        background: rgba(255,255,255,0.08);
+        margin: 1.4rem 0;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 13px;
+        font-size: 17px;
+        font-weight: bold;
+        border-radius: 30px;
+        border: none;
+        background: linear-gradient(135deg, #00ffa2, #00c3ff);
+        color: black;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 0 15px rgba(0,195,255,0.4);
+        margin-top: 1.2rem;
+    }
+    .btn:hover { transform: scale(1.03); box-shadow: 0 0 25px rgba(0,195,255,0.7); }
+    .btn:active { transform: scale(0.97); }
+
+    .error-msg {
+        color: #ff6b6b;
+        font-size: 13px;
+        margin-top: 0.8rem;
+        display: none;
+    }
+
+    .result {
+        display: none;
+        margin-top: 1.8rem;
+    }
+
+    .result-separator {
+        height: 1px;
+        background: rgba(255,255,255,0.08);
+        margin-bottom: 1.8rem;
+    }
+
+    .result-label {
+        font-size: 12px;
+        color: rgba(255,255,255,0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.5rem;
+    }
+
+    .result-main {
+        font-size: 72px;
+        font-weight: bold;
+        line-height: 1;
+        background: linear-gradient(90deg, #00ffa2, #00c3ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.3rem;
+    }
+
+    .result-unit {
+        font-size: 17px;
+        color: rgba(255,255,255,0.45);
+        margin-bottom: 1.4rem;
+    }
+
+    .chips {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .chip {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        font-size: 13px;
+        color: rgba(255,255,255,0.45);
+    }
+    .chip span {
+        color: rgba(255,255,255,0.85);
+        font-weight: 500;
+    }
+</style>
+</head>
+<body>
+
+<a class="back-btn" href="index.html">← Retour</a>
+
+<div class="card">
+    <h2>🎯 Objectif minutes</h2>
+    <p class="subtitle">Calculez votre moyenne quotidienne à tenir</p>
+
+    <div class="field">
+        <label>Minutes d'objectif</label>
+        <div class="input-row">
+            <input type="number" id="input1" min="0" placeholder="ex : 3000" />
+            <span class="unit">min</span>
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Minutes actuelles (total)</label>
+        <div class="input-row">
+            <input type="number" id="input2" min="0" placeholder="ex : 1200" />
+            <span class="unit">min</span>
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Minutes actuelles du jour</label>
+        <div class="input-row">
+            <input type="number" id="input3" min="0" placeholder="ex : 45" />
+            <span class="unit">min</span>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field">
+        <label>Date d'arrivée</label>
+        <input type="date" id="dateEnd" />
+    </div>
+
+    <button class="btn" onclick="calculate()">Calculer</button>
+    <p class="error-msg" id="errorMsg"></p>
+
+    <div class="result" id="result">
+        <div class="result-separator"></div>
+        <div class="result-label">Moyenne par jour</div>
+        <div class="result-main" id="resultMain">—</div>
+        <div class="result-unit">min / jour</div>
+        <div class="chips">
+            <div class="chip">Minutes restantes : <span id="chipRemaining">—</span></div>
+            <div class="chip">Jours restants : <span id="chipDays">—</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+    document.getElementById("dateEnd").value = todayStr;
+
+    function clearResult() {
+        document.getElementById("result").style.display = "none";
+        document.getElementById("errorMsg").style.display = "none";
+    }
+
+    ["input1","input2","input3","dateEnd"].forEach(id => {
+        document.getElementById(id).addEventListener("input", clearResult);
+    });
+
+    function calculate() {
+        const objectif  = parseFloat(document.getElementById("input1").value);
+        const actuel    = parseFloat(document.getElementById("input2").value);
+        const aujourdhui = parseFloat(document.getElementById("input3").value);
+        const dateEndVal = document.getElementById("dateEnd").value;
+        const errorMsg   = document.getElementById("errorMsg");
+
+        if (isNaN(objectif) || isNaN(actuel) || isNaN(aujourdhui)) {
+            errorMsg.textContent = "⚠ Veuillez remplir les trois champs de minutes.";
+            errorMsg.style.display = "block";
+            return;
+        }
+
+        if (!dateEndVal) {
+            errorMsg.textContent = "⚠ Veuillez choisir une date d'arrivée.";
+            errorMsg.style.display = "block";
+            return;
+        }
+
+        const end = new Date(dateEndVal);
+        const start = new Date(todayStr);
+
+        if (end < start) {
+            errorMsg.textContent = "⚠ La date d'arrivée doit être aujourd'hui ou dans le futur.";
+            errorMsg.style.display = "block";
+            return;
+        }
+
+        // Formule : objectif - actuel + actuel_du_jour
+        // = objectif - (actuel - actuel_du_jour)
+        // = minutes restantes comme si la journée n'avait pas encore commencé
+        const remaining = objectif - actuel + aujourdhui;
+
+        if (remaining <= 0) {
+            errorMsg.textContent = "⚠ Objectif déjà atteint ou dépassé !";
+            errorMsg.style.display = "block";
+            document.getElementById("result").style.display = "none";
+            return;
+        }
+
+        errorMsg.style.display = "none";
+
+        // Nombre de jours, jour actuel inclus
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const days = Math.round((end - start) / msPerDay) + 1;
+
+        // Moyenne arrondie à l'unité supérieure
+        const avg = Math.ceil(remaining / days);
+
+        document.getElementById("resultMain").textContent     = avg;
+        document.getElementById("chipRemaining").textContent  = remaining + " min";
+        document.getElementById("chipDays").textContent       = days + (days > 1 ? " jours" : " jour");
+
+        document.getElementById("result").style.display = "block";
+    }
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") calculate();
+    });
+</script>
+
+</body>
+</html>
